@@ -1,136 +1,131 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle"></title>
+    <title>Group 2 - Task</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             text-align: center;
-            background: linear-gradient(135deg, #228B22, #A9A9A9);
+            background: linear-gradient(135deg, #b79f8d, #8b0000);
             color: white;
         }
         .container {
+            margin-top: 50px;
+        }
+        .task-box {
             background: rgba(255, 255, 255, 0.2);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            max-width: 600px;
-            margin: 20px auto;
+            display: inline-block;
         }
-        input {
+        .task-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .task-code-input {
+            margin-top: 15px;
+        }
+        input[type="text"] {
             padding: 10px;
-            font-size: 1rem;
+            width: 200px;
+            border: none;
             border-radius: 5px;
-            border: none;
-            width: 80%;
-            margin-bottom: 10px;
+            text-align: center;
         }
-        .button {
-            background: #b79f8d;
-            border: none;
-            color: white;
+        button {
+            margin-top: 10px;
             padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .button:hover {
             background: #8b0000;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #b79f8d;
         }
         .locked {
-            color: red;
-            font-size: 1.5rem;
             display: none;
+            color: red;
+            font-size: 20px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <h1 id="groupHeader"></h1>
-    <div class="locked" id="lockMessage">Your group has been locked! You cannot proceed.</div>
-    
-    <div class="container" id="taskContainer">
-        <h2 id="taskTitle"></h2>
-        <p>Enter the correct code to proceed:</p>
-        <input type="text" id="taskInput" placeholder="Enter task code">
-        <button class="button" onclick="checkTask()">Submit</button>
+    <div class="container">
+        <h1>Welcome, Group 2</h1>
+        <div class="locked" id="lockedMessage">🔒 This group has been locked! 🔒</div>
+        <div class="task-box" id="taskContainer">
+            <p class="task-title" id="taskTitle">Loading task...</p>
+            <div class="task-code-input">
+                <input type="text" id="taskCode" placeholder="Enter task code">
+                <button onclick="submitTask()">Submit</button>
+            </div>
+        </div>
+        <p id="timer">Time: 00:00</p>
     </div>
 
-    <p>Time: <span id="timer">00:00</span></p>
-
     <script>
-        let groupName = "Group 2"; // Change this for each group (e.g., "Group 2", "Group 3")
-        document.getElementById("pageTitle").innerText = groupName;
-        document.getElementById("groupHeader").innerText = groupName;
-
         let tasks = [
-            { name: "عمر الوزني", code: "T1CODE" },
-            { name: "قصي الظاهر", code: "T2CODE" },
-            { name: "مروان الصيفي", code: "T3CODE" },
-            { name: "انس مالك", code: "T4CODE" },
-            { name: "محمد عماوي", code: "T5CODE" },
-            { name: "اسامة خريم", code: "T6CODE" },
-            { name: "مهند غسان", code: "T7CODE" },
-            { name: "Difficult Math Questions", code: "T8CODE" },
-            { name: "Very Hard Riddle", code: "T9CODE" },
-            { name: "Contact Hussam Farajeh (0790095271)", code: "T10CODE" }
+            { title: "عمر الوزني", code: "A123" },
+            { title: "قصي الظاهر", code: "B234" },
+            { title: "مروان الصيفي", code: "C345" },
+            { title: "انس مالك", code: "D456" },
+            { title: "محمد عماوي", code: "E567" },
+            { title: "اسامة خريم", code: "F678" },
+            { title: "مهند غسان", code: "G789" },
+            { title: "Difficult Math Questions", code: "H890" },
+            { title: "Very Hard Riddle", code: "I901" },
+            { title: "Contact Hussam Farajeh (0790095271)", code: "J012" }
         ];
 
-        let availableTasks = [...tasks];
-        let currentTask = null;
-        let isLocked = localStorage.getItem(groupName + "_locked") === "true";
+        let currentTaskIndex = Math.floor(Math.random() * tasks.length);
+        let currentTask = tasks[currentTaskIndex];
+        document.getElementById("taskTitle").innerText = currentTask.title;
 
-        function startGame() {
-            if (isLocked) {
-                document.getElementById("lockMessage").style.display = "block";
-                document.getElementById("taskContainer").style.display = "none";
-                return;
-            }
-            startTimer();
-            assignTask();
-        }
-
-        function assignTask() {
-            if (availableTasks.length === 0) {
-                document.getElementById("taskTitle").innerText = "All tasks completed!";
-                document.getElementById("taskContainer").style.display = "none";
-                return;
-            }
-            let randomIndex = Math.floor(Math.random() * availableTasks.length);
-            currentTask = availableTasks.splice(randomIndex, 1)[0];
-            document.getElementById("taskTitle").innerText = currentTask.name;
-        }
-
-        function checkTask() {
-            let inputCode = document.getElementById("taskInput").value;
-            if (inputCode === currentTask.code) {
-                assignTask();
-                document.getElementById("taskInput").value = "";
+        function submitTask() {
+            let enteredCode = document.getElementById("taskCode").value;
+            if (enteredCode === currentTask.code) {
+                tasks.splice(currentTaskIndex, 1);  // Remove completed task
+                if (tasks.length > 0) {
+                    currentTaskIndex = Math.floor(Math.random() * tasks.length);
+                    currentTask = tasks[currentTaskIndex];
+                    document.getElementById("taskTitle").innerText = currentTask.title;
+                    document.getElementById("taskCode").value = "";
+                    alert("Correct! Next task started.");
+                } else {
+                    alert("Congratulations! All tasks completed.");
+                }
             } else {
-                alert("Incorrect code! Try again.");
+                alert("Wrong code! Try again.");
             }
         }
 
-        function startTimer() {
-            let seconds = localStorage.getItem(groupName + "_timer") || 0;
-            setInterval(() => {
-                seconds++;
-                localStorage.setItem(groupName + "_timer", seconds);
-                document.getElementById("timer").innerText = formatTime(seconds);
-            }, 1000);
+        // Auto-start timer
+        let startTime = Date.now();
+        function updateTimer() {
+            let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+            let minutes = Math.floor(elapsedTime / 60);
+            let seconds = elapsedTime % 60;
+            document.getElementById("timer").innerText = `Time: ${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+            setTimeout(updateTimer, 1000);
         }
+        updateTimer();
 
-        function formatTime(seconds) {
-            let minutes = Math.floor(seconds / 60);
-            let secs = seconds % 60;
-            return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+        // Check lock status from admin (example: check local storage)
+        function checkLockStatus() {
+            if (localStorage.getItem("groupX_locked") === "true") {
+                document.getElementById("lockedMessage").style.display = "block";
+                document.getElementById("taskContainer").style.display = "none";
+            }
         }
-
-        startGame();
+        checkLockStatus();
     </script>
 </body>
 </html>
