@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #b79f8d, #8b0000);
+            color: white;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid white;
+        }
+        th {
+            background: #8b0000;
+        }
+        .lock-btn {
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .unlock-btn {
+            background: green;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .reset-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: yellow;
+            color: black;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Admin Panel</h1>
+    <h2>Group Progress</h2>
+
+    <table>
+        <tr>
+            <th>Group</th>
+            <th>Login Code</th>
+            <th>Current Task</th>
+            <th>Time Elapsed</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        <tbody id="groupTable">
+            <!-- Groups will be added dynamically -->
+        </tbody>
+    </table>
+
+    <h2>Task Codes</h2>
+    <table>
+        <tr>
+            <th>Task</th>
+            <th>Code</th>
+        </tr>
+        <tr><td>عمر الوزني</td><td>A123</td></tr>
+        <tr><td>قصي الظاهر</td><td>B234</td></tr>
+        <tr><td>مروان الصيفي</td><td>C345</td></tr>
+        <tr><td>انس مالك</td><td>D456</td></tr>
+        <tr><td>محمد عماوي</td><td>E567</td></tr>
+        <tr><td>اسامة خريم</td><td>F678</td></tr>
+        <tr><td>مهند غسان</td><td>G789</td></tr>
+        <tr><td>Difficult Math Questions</td><td>H890</td></tr>
+        <tr><td>Very Hard Riddle</td><td>I901</td></tr>
+        <tr><td>Contact Hussam Farajeh (0790095271)</td><td>J012</td></tr>
+    </table>
+
+    <button class="reset-btn" onclick="resetGame()">Reset Game</button>
+
+    <script>
+        let groups = [
+            { name: "Group 1", code: "G1X7A", locked: false, task: "Waiting", time: "00:00" },
+            { name: "Group 2", code: "G2B8F", locked: false, task: "Waiting", time: "00:00" },
+            { name: "Group 3", code: "G3C9L", locked: false, task: "Waiting", time: "00:00" },
+            { name: "Group 4", code: "G4D1M", locked: false, task: "Waiting", time: "00:00" },
+            { name: "Group 5", code: "G5E2N", locked: false, task: "Waiting", time: "00:00" },
+            { name: "Group 6", code: "G6F3O", locked: false, task: "Waiting", time: "00:00" },
+            { name: "Group 7", code: "G7G4P", locked: false, task: "Waiting", time: "00:00" },
+            { name: "Group 8", code: "G8H5Q", locked: false, task: "Waiting", time: "00:00" },
+            { name: "Group 9", code: "G9I6R", locked: false, task: "Waiting", time: "00:00" },
+            { name: "Group 10", code: "G10J7S", locked: false, task: "Waiting", time: "00:00" }
+        ];
+
+        function updateTable() {
+            let table = document.getElementById("groupTable");
+            table.innerHTML = "";
+
+            groups.forEach((group, index) => {
+                let row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${group.name}</td>
+                    <td>${group.code}</td>
+                    <td>${group.task}</td>
+                    <td>${group.time}</td>
+                    <td>${group.locked ? "🔒 Locked" : "✅ Active"}</td>
+                    <td>
+                        <button class="${group.locked ? 'unlock-btn' : 'lock-btn'}" onclick="toggleLock(${index})">
+                            ${group.locked ? "Unlock" : "Lock"}
+                        </button>
+                    </td>
+                `;
+
+                table.appendChild(row);
+            });
+        }
+
+        function toggleLock(index) {
+            groups[index].locked = !groups[index].locked;
+            localStorage.setItem(groups[index].name + "_locked", groups[index].locked);
+            updateTable();
+        }
+
+        function resetGame() {
+            groups.forEach(group => {
+                group.locked = false;
+                group.task = "Waiting";
+                group.time = "00:00";
+                localStorage.removeItem(group.name + "_locked");
+            });
+            alert("Game Reset!");
+            updateTable();
+        }
+
+        function updateTimers() {
+            groups.forEach(group => {
+                let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+                let minutes = Math.floor(elapsedTime / 60);
+                let seconds = elapsedTime % 60;
+                group.time = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+            });
+            updateTable();
+            setTimeout(updateTimers, 1000);
+        }
+
+        let startTime = Date.now();
+        updateTable();
+        updateTimers();
+    </script>
+</body>
+</html>
